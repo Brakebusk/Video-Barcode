@@ -11,7 +11,7 @@ def convert(inputfile, outputfile, sps):
     vid = cv2.VideoCapture(inputfile)
     length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
     framerate = int(vid.get(cv2.CAP_PROP_FPS))
-    samplerate = int(framerate / sps) if sps > 0 else 1
+    samplerate = int(framerate / sps) if sps > 0 and sps <= framerate else 1
 
     columns = [] #Will hold bgr formatted columns of output image
 
