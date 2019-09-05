@@ -9,22 +9,19 @@ def averageColorPerRow(image):
 def convert(inputfile, outputfile="output.png"):
     vid = cv2.VideoCapture(inputfile)
     length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
-
     vidHeight = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT) )
-    output = np.empty([vidHeight, 0, 3])
+
+    columns = [] #Will hold bgr formatted columns of output image
 
     success, image = vid.read()
-    count = 0
     while success:
-        count += 1
+        columns.append(averageColorPerRow(image))
         
-        colorAverage = averageColorPerRow(image)
-        output = cv2.hconcat([output, colorAverage])
-        
-        print("Progress: {}/{} ({:.1f}%)".format(count, length, (100*count/length)), end="\r")
+        print("Progress: {}/{} ({:.1f}%)".format(len(columns), length, (100*len(columns)/length)), end="\r")
         success, image = vid.read()
 
-    cv2.imwrite(outputfile, output)
+    #Assemble columns and save image:
+    cv2.imwrite(outputfile, cv2.hconcat(columns))
     print("\nImage saved to {}!".format(outputfile))
 
 if __name__ == "__main__":
