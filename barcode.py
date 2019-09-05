@@ -1,4 +1,5 @@
 import sys
+import argparse
 import cv2
 import numpy as np
 
@@ -6,7 +7,7 @@ def averageColorPerRow(image):
     a =  np.average(image, axis=1)
     return a[:, np.newaxis, :]
 
-def convert(inputfile, outputfile="output.png"):
+def convert(inputfile, outputfile, fps):
     vid = cv2.VideoCapture(inputfile)
     length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
     vidHeight = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT) )
@@ -25,12 +26,29 @@ def convert(inputfile, outputfile="output.png"):
     print("\nImage saved to {}!".format(outputfile))
 
 if __name__ == "__main__":
-    try:
-        inputfile = sys.argv[1]
-        if len(sys.argv) > 2:
-            convert(inputfile, sys.argv[2])
-        else:
-            convert(inputfile)
+    args = sys.argv[1:]
 
-    except IndexError:
-        print("Too few command line arguments given. Usage: barcode.py <videofile> [outputfile]")
+    if len(args) == 0 or args[0] in ["--help", "-h"]:
+        #Print help page
+        print("""barcode.py
+
+Usage:
+    barcode.py <inputfile> [outputfile] [--fps=<fps>]
+    barcode.py -h | --help
+
+Options:
+    -h --help     Show this information
+    [outputfile]  Set output filename
+    --fps=<fps>   How many frames to sample from each second of video
+
+Examples:
+    barcode.py video.mp4 out.png --fps=4""")
+    else:
+        parser = argparse.ArgumentParser()
+
+        parser.add_argument("inputfile", type=str)
+        parser.add_argument("outputfile", type=str, nargs='?', default="output.png")
+        parser.add_argument("--fps", type=int, default=0)
+
+        pArgs = parser.parse_args()
+        convert(pArgs.inputfile, pArgs.outputfile, pArgs.fps)
