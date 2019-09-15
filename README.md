@@ -10,13 +10,16 @@ It's something
 barcode.py
 
 Usage:
-    barcode.py <inputfile> [outputfile] [--sps=<sps>]
+    barcode.py <inputfile> [outputfile] [--sps=<sps>] | [--ar=<width:height>] [--ignore=<seconds>]
     barcode.py -h | --help
 
 Options:
-    -h --help     Show this information
-    [outputfile]  Set output filename
-    --sps=<sps>   Samples Per Second - How many frames to sample from each second of video
+    -h --help           Show this information
+    [outputfile]        Set output filename
+    --sps=<sps>         Samples Per Second - How many frames to sample from 
+                        each second of video
+    --ar=<width:height> Output image aspect ratio - Automatically determine sps
+    --ignore=<seconds>  Ignore the last x seconds of the input video (crop out credits)
 
 Examples:
     barcode.py video.mp4 out.png --sps=4
