@@ -9,10 +9,10 @@ def averageColorPerRow(image):
     a =  np.average(image, axis=1)
     return a[:, np.newaxis, :]
 
-def convert(inputfile, outputfile, sps=0, ar=None):
+def convert(inputfile, outputfile, sps=0, ar=None, ignore=0):
     vid = cv2.VideoCapture(inputfile)
-    length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
     framerate = int(vid.get(cv2.CAP_PROP_FPS))
+    length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT)) - (framerate * ignore)
     height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT)) #Vertical resolution of video
 
     if not ar:
@@ -25,7 +25,7 @@ def convert(inputfile, outputfile, sps=0, ar=None):
 
     counter = 0
     success, image = vid.read()
-    while success:
+    while success and counter <= length:
         if counter % samplerate == 0:
             columns.append(averageColorPerRow(image))
         print("Progress: {}/{} ({:.1f}%)".format(counter, length, (100*counter/length)), end="\r")
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         print("""barcode.py
 
 Usage:
-    barcode.py <inputfile> [outputfile] [--sps=<sps>] | [--ar=<width:height>]
+    barcode.py <inputfile> [outputfile] [--sps=<sps>] | [--ar=<width:height>] [--ignore=<seconds>]
     barcode.py -h | --help
 
 Options:
@@ -53,6 +53,7 @@ Options:
     --sps=<sps>         Samples Per Second - How many frames to sample from 
                         each second of video
     --ar=<width:height> Output image aspect ratio - Automatically determine sps
+    --ignore=<seconds>  Ignore the last x seconds of the input video (crop out credits)
 
 Examples:
     barcode.py video.mp4 out.png --sps=4""")
@@ -69,6 +70,7 @@ Examples:
         parser.add_argument("outputfile", type=str, nargs='?', default="output.png")
         parser.add_argument("--sps", type=int, default=0)
         parser.add_argument("--ar", type=ar_pattern, default=None)
+        parser.add_argument("--ignore", type=int, default=0)
 
         pArgs = parser.parse_args()
-        convert(pArgs.inputfile, pArgs.outputfile, pArgs.sps, pArgs.ar)
+        convert(pArgs.inputfile, pArgs.outputfile, pArgs.sps, pArgs.ar, pArgs.ignore)
