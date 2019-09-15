@@ -2,16 +2,24 @@ import sys
 import argparse
 import cv2
 import numpy as np
+import re
+from functools import reduce
 
 def averageColorPerRow(image):
     a =  np.average(image, axis=1)
     return a[:, np.newaxis, :]
 
-def convert(inputfile, outputfile, sps):
+def convert(inputfile, outputfile, sps=0, ar=None):
     vid = cv2.VideoCapture(inputfile)
     length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
     framerate = int(vid.get(cv2.CAP_PROP_FPS))
-    samplerate = round(framerate / sps) if sps > 0 and sps <= framerate else 1
+    height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT)) #Vertical resolution of video
+
+    if not ar:
+        samplerate = round(framerate / sps) if sps > 0 and sps <= framerate else 1
+    else:
+        ratio = reduce(lambda x, y : x / y, map(int, ar.split(":"))) #Oneliner yo
+        samplerate = round(length / (ratio * height))
 
     columns = [] #Will hold bgr formatted columns of output image
 
@@ -36,22 +44,31 @@ if __name__ == "__main__":
         print("""barcode.py
 
 Usage:
-    barcode.py <inputfile> [outputfile] [--sps=<sps>]
+    barcode.py <inputfile> [outputfile] [--sps=<sps>] | [--ar=<width:height>]
     barcode.py -h | --help
 
 Options:
-    -h --help     Show this information
-    [outputfile]  Set output filename
-    --sps=<sps>   Samples Per Second - How many frames to sample from each second of video
+    -h --help           Show this information
+    [outputfile]        Set output filename
+    --sps=<sps>         Samples Per Second - How many frames to sample from 
+                        each second of video
+    --ar=<width:height> Output image aspect ratio - Automatically determine sps
 
 Examples:
     barcode.py video.mp4 out.png --sps=4""")
     else:
         parser = argparse.ArgumentParser()
 
+        def ar_pattern(s, pat=re.compile(r"^\d+[:]\d+$")):
+            #Used to validate ar value as <number>:<number> and nothing else
+            if not pat.match(s):
+                raise argparse.ArgumentTypeError
+            return s
+
         parser.add_argument("inputfile", type=str)
         parser.add_argument("outputfile", type=str, nargs='?', default="output.png")
         parser.add_argument("--sps", type=int, default=0)
+        parser.add_argument("--ar", type=ar_pattern, default=None)
 
         pArgs = parser.parse_args()
-        convert(pArgs.inputfile, pArgs.outputfile, pArgs.sps)
+        convert(pArgs.inputfile, pArgs.outputfile, pArgs.sps, pArgs.ar)
