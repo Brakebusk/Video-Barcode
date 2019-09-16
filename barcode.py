@@ -93,7 +93,7 @@ Options:
                         each second of video
     --ar=<width:height> Output image aspect ratio - Automatically determine sps
     --ignore=<seconds>  Ignore the last x seconds of the input video (crop out credits)
-    --autocrop          Automatically crop out vertical
+    --autocrop          Automatically crop out letterboxing and pillarboxing
 
 Examples:
     barcode.py video.mp4 out.png --sps=4""")
