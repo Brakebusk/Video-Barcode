@@ -10,7 +10,7 @@ It's something
 barcode.py
 
 Usage:
-    barcode.py <inputfile> [outputfile] [--sps=<sps>] | [--ar=<width:height>] [--ignore=<seconds>]
+    barcode.py <inputfile> [outputfile] [--sps=<sps>] | [--ar=<width:height>] [--ignore=<seconds>] [--autocrop]
     barcode.py -h | --help
 
 Options:
@@ -20,9 +20,10 @@ Options:
                         each second of video
     --ar=<width:height> Output image aspect ratio - Automatically determine sps
     --ignore=<seconds>  Ignore the last x seconds of the input video (crop out credits)
+    --autocrop          Automatically crop out vertical
 
 Examples:
-    barcode.py video.mp4 out.png --sps=4
+    barcode.py video.mp4 out.png --ar=3:2
 ```
 
 ## Example output:
