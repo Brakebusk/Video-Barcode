@@ -26,9 +26,8 @@ Examples:
 ```
 
 ## Example output:
-`barcode.py video.mp4 example1.png`  
-![It's something](https://github.com/Brakebusk/Video-Barcode/blob/master/example1.png)  
+`barcode.py alien.mp4 alien.png --ar=21:9 --ignore=164 --autocrop`  
+![Alien Theatrical cut](https://github.com/Brakebusk/Video-Barcode/blob/master/Examples/alien.png)  
 
-`barcode.py video.mp4 example2.png --sps=5`  
-![It's something](https://github.com/Brakebusk/Video-Barcode/blob/master/example2.png)  
-Original framerate is 25, which means we will sample every 5th frame (25/5=5)
+`barcode.py atlantis.mp4 atlantis.png --ar=21:9 --ignore=375`  
+![Atlantis The Lost Empire](https://github.com/Brakebusk/Video-Barcode/blob/master/Examples/atlantis.png)  
