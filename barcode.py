@@ -1,6 +1,7 @@
 from functools import reduce
 import numpy as np
 import argparse
+import random
 import sys
 import cv2
 import re
@@ -72,7 +73,12 @@ def convert(inputfile, outputfile, sps=0, ar=None, ignore=0, autocrop=False):
         counter += 1
 
     #Assemble columns and save image:
-    cv2.imwrite(outputfile, cv2.hconcat(columns))
+    try:
+        cv2.imwrite(outputfile, cv2.hconcat(columns))
+    except:
+        #Problem with given filename fallback on default:
+        outputfile = "output_{}.png".format(''.join(str(random.randint(0, 9)) for _ in range(5)))
+        cv2.imwrite(outputfile, cv2.hconcat(columns))
     print("\nImage saved to {}!".format(outputfile))
 
 if __name__ == "__main__":
